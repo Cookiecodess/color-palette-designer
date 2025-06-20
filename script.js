@@ -69,7 +69,10 @@ function createColorElObj(colorHex) {
                     <button class="btn" aria-label="Edit">Edit</button>
                     <button class="btn" aria-label="Add to Right">Add to Right</button>
                 </div>
-                <div class="color-hex">${normalizedHex}</div>
+                <div class="color-hex">
+                    ${normalizedHex}
+                    <span>(copy?)</span>
+                </div>
             </div>  
         `
     };
@@ -82,6 +85,37 @@ function updateColorPalette() {
         const colorDivHtml = colorElObj.html;
         colorPalette.innerHTML += colorDivHtml;
     });
+
+    const colorHexEls = document.querySelectorAll(".color-hex");
+    colorHexEls.forEach((colorHexEl) => {
+        colorHexEl.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("color-hex")) {
+                return;
+            }
+            
+            const hexText = e.target.childNodes.item(0).textContent.trim(); // childNodes includes text nodes, unlike children. 
+                                                                            // Also, childNodes is a NodeList, which means array methods don't work on it;
+                                                                            // children is an Array. Use item() to access an element of a NodeList.
+            const copyText = e.target.children[0];
+            const original = copyText.innerText;  
+
+            navigator.clipboard.writeText(hexText)
+                .then(() => {
+                    console.log("Copied!");
+                    copyText.innerText = "(copied!)";                    
+                })
+                .catch(() => {
+                    console.log("Failed to copy to clipboard")
+                    copyText.innerText = "(failed to copy)";                    
+                })
+                .finally(() => {
+                    // reset text content to original
+                    setTimeout(() => {
+                        copyText.innerText = original;
+                    }, 3000);
+                });
+        });
+    })
 }
 
 colorPalette.addEventListener("contextmenu", (e) => {
@@ -177,7 +211,4 @@ const redElObj = createColorElObj("#660000");
 const blueElObj = createColorElObj("#00FFFF");
 const colorElObjArray = [purpleElObj, redElObj, blueElObj];
 
-colorElObjArray.forEach((colorElObj) => {
-    console.log("appended")
-    colorPalette.innerHTML += colorElObj.html;
-})
+updateColorPalette();
