@@ -105,5 +105,19 @@ body {
     left: 50%;
     transform: translateX(-50%);
     font-size: 20px;
+    transition: all 0.3s;
+}
+
+.dark-color .color-hex {
     color: #fff6;
+}
+.dark-color:hover .color-hex {
+    color: #fff;
+}
+
+.bright-color .color-hex {
+    color: #0006;
+}
+.bright-color:hover .color-hex {
+    color: #000;
 }

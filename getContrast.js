@@ -1,12 +1,12 @@
 /*!
- * Get the contrasting color for any hex color
+ * Determine whether a hex color is bright or dark
  * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
  * Derived from work by Brian Suda, https://24ways.org/2010/calculating-color-contrast/
- * Modified slightly by Cookiecodess (return values)
+ * Modified slightly by Cookiecodess (function name, purpose and return values)
  * @param  {String} A hexcolor value
  * @return {String} The contrasting color (black or white)
  */
-var getContrast = function (hexcolor){
+var getBrightOrDark = function (hexcolor){
 
 	// If a leading # is provided, remove it
 	if (hexcolor.slice(0, 1) === '#') {
@@ -29,6 +29,6 @@ var getContrast = function (hexcolor){
 	var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
 
 	// Check contrast
-	return (yiq >= 128) ? '#0006' : '#fff6';
+	return (yiq >= 128) ? 'bright' : 'dark';
 
 };

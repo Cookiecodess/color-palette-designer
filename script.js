@@ -63,13 +63,13 @@ function createColorElObj(colorHex) {
     return {
         id: uniqueID,
         html: `
-            <div class="color" id="${uniqueID}" style="background-color:${normalizedHex}">
+            <div class="color ${getBrightOrDark(colorHex)}-color" id="${uniqueID}" style="background-color:${normalizedHex}">
                 <div class="context-menu">
                     <button class="btn" aria-label="Add to Left">Add to Left</button>
                     <button class="btn" aria-label="Edit">Edit</button>
                     <button class="btn" aria-label="Add to Right">Add to Right</button>
                 </div>
-                <div class="color-hex" style="color:${getContrast(normalizedHex)}">${normalizedHex}</div>
+                <div class="color-hex">${normalizedHex}</div>
             </div>  
         `
     };
