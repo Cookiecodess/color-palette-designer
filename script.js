@@ -2,6 +2,7 @@ const btnArray = document.querySelectorAll(".btn");
 const colorPalette = document.querySelector(".color-palette");
 
 const templateColor = "#ddd";
+const CONTEXT_MENU_MARGIN_PX = 20;
 
 /**
  * 
@@ -101,6 +102,24 @@ colorPalette.addEventListener("contextmenu", (e) => {
 
         // show custom context menu
         contextMenu.classList.add("show"); 
+
+        // adjust custom context menu's position so it stays fully within the viewport
+        // IMPORTANT: this only works when display != none
+        // so this must run after adding the "show" class
+        const rect = contextMenu.getBoundingClientRect();
+        console.log(rect.left);
+        if (rect.left < CONTEXT_MENU_MARGIN_PX) {
+            contextMenu.style.position = "fixed";
+            contextMenu.style.left = `${CONTEXT_MENU_MARGIN_PX}px`;
+            contextMenu.style.transform = "translateY(-50%)"; // only center vertically, don't translate vertically
+            console.log(contextMenu.style.left)
+        } else if (rect.right > window.innerWidth - CONTEXT_MENU_MARGIN_PX) {
+            contextMenu.style.position = "fixed";
+            contextMenu.style.left = `${window.innerWidth - rect.width - CONTEXT_MENU_MARGIN_PX}px`;
+            contextMenu.style.transform = "translateY(-50%)"; // only center vertically, don't translate vertically
+            console.log(contextMenu.style.right)
+        }
+        
 
         addToLeftBtn.addEventListener('click', (e) => {
             // insert new color div to the left of current color div
