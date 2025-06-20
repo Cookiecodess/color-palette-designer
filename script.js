@@ -1,7 +1,7 @@
 const btnArray = document.querySelectorAll(".btn");
 const colorPalette = document.querySelector(".color-palette");
 
-const templateColor = "#333333";
+const templateColor = "#ddd";
 
 /**
  * 
@@ -17,31 +17,58 @@ function getColorsArray() {
     return Array.from(colorPalette.children);
 }
 
-function createColorElObj(colorHex) {
+/**
+ * 
+ * @param {string} colorHex 
+ * @returns empty string on failure, normalized hex code (e.g. "#00AAFF") on success
+ */
+function normalizeColorHex(colorHex) {
+    // prepend with '#' if does not begin with '#'
+    // this is so that the function supports
+    // color hex codes without a starting '#'
     if (!colorHex.match(/^#/)) {
-        // prepend with '#' if does not begin with '#'
-        // this is so that the function supports
-        // color hex codes without a starting '#'
         colorHex = '#' + colorHex;
     }    
+
+    // if does not match the pattern "#000" or "#000000",
+    // return empty string, signifying failure
     if (!colorHex.match(/^#(?:[0-9a-fA-F]{3}){1,2}$/)) {
-        // does not match the pattern "#000" or "#000000"
-        return;
+        return "";
     }
 
-    // id = colorHex + random string, to ensure uniqueness
-    const uniqueID = colorHex + '-' + getRandomString();
+    // Normalize
+
+    // 1. To uppercase
+    let normalizedHex = colorHex.toUpperCase();
+
+    // 2. For #FFF format, convert to #FFFFFF format
+    if (colorHex.length === 4) {
+        normalizedHex = '#' + normalizedHex[1].repeat(2) + normalizedHex[2].repeat(2) + normalizedHex[3].repeat(2);
+    } 
+
+    return normalizedHex;
+}
+
+function createColorElObj(colorHex) {
+    const normalizedHex = normalizeColorHex(colorHex);
+    if (!normalizedHex) {
+        console.log("Error: invalid hex code passed into createColorElObj");
+        return; // early return if hex code is invalid
+    }
+
+    // id = normalizedHex + random string, to ensure uniqueness
+    const uniqueID = normalizedHex + '-' + getRandomString();
 
     return {
         id: uniqueID,
         html: `
-            <div class="color" id="${uniqueID}" style="background-color:${colorHex}">
+            <div class="color" id="${uniqueID}" style="background-color:${normalizedHex}">
                 <div class="context-menu">
                     <button class="btn" aria-label="Add to Left">Add to Left</button>
                     <button class="btn" aria-label="Edit">Edit</button>
                     <button class="btn" aria-label="Add to Right">Add to Right</button>
                 </div>
-                <div class="color-hex" style="color:${getContrast(colorHex)}">${colorHex}</div>
+                <div class="color-hex" style="color:${getContrast(normalizedHex)}">${normalizedHex}</div>
             </div>  
         `
     };
@@ -72,7 +99,8 @@ colorPalette.addEventListener("contextmenu", (e) => {
             console.log("Error: color element object not found in colorElObjArray")
         }
 
-        contextMenu.classList.add("show");
+        // show custom context menu
+        contextMenu.classList.add("show"); 
 
         addToLeftBtn.addEventListener('click', (e) => {
             // insert new color div to the left of current color div
