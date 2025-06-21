@@ -6,7 +6,7 @@
  * @param  {String} A hexcolor value
  * @return {String} The contrasting color (black or white)
  */
-var getBrightOrDark = function (hexcolor){
+export function getBrightOrDark(hexcolor) {
 
 	// If a leading # is provided, remove it
 	if (hexcolor.slice(0, 1) === '#') {

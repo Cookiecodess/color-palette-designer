@@ -1,3 +1,6 @@
+import { getBrightOrDark } from "./getContrast.js";
+import { Color } from "./Color.js";
+
 const btnArray = document.querySelectorAll(".btn");
 const colorPalette = document.querySelector(".color-palette");
 
@@ -222,3 +225,5 @@ const blueElObj = createColorElObj("#996633");
 const colorElObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
 
 updateColorPalette();
+
+new Color();
