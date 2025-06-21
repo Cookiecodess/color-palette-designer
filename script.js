@@ -53,42 +53,49 @@ function normalizeColorHex(colorHex) {
     return normalizedHex;
 }
 
-function createColorElObj(colorHex) {
+/**
+ * 
+ * @param {string} colorHex e.g. "#00DDFF" or "#0DF" or "00DDFF" or "0DF"
+ * @returns a Color object
+ * @throws an Error if colorHex is in an invalid format
+ */
+function createColorObj(colorHex) {
     const normalizedHex = normalizeColorHex(colorHex);
     if (!normalizedHex) {
-        console.log("Error: invalid hex code passed into createColorElObj");
-        return; // early return if hex code is invalid
+        throw new Error("Invalid hex code passed into createColorObj");
     }
 
     // id = normalizedHex + random string, to ensure uniqueness
     const uniqueID = normalizedHex + '-' + getRandomString();
 
-    return {
-        id: uniqueID,
-        html: `
-            <div class="color ${getBrightOrDark(colorHex)}-color" id="${uniqueID}" style="background-color:${normalizedHex}">
+    return new Color(
+        uniqueID,
+        normalizedHex
+    );
+}
+
+function updateColorPalette() {
+    colorPalette.innerHTML = "";
+
+    colorObjArray.forEach((colorObj) => {
+        const colorDivHtml = `
+            <div class="color ${getBrightOrDark(colorObj.colorHex)}-color" id="${colorObj.id}" style="background-color:${colorObj.colorHex}">
                 <div class="context-menu">
                     <button class="btn" aria-label="Add to Left">Add to Left</button>
                     <button class="btn" aria-label="Edit">Edit</button>
                     <button class="btn" aria-label="Add to Right">Add to Right</button>
                 </div>
                 <div class="color-hex">
-                    ${normalizedHex}
+                    ${colorObj.colorHex}
                     <span>(copy?)</span>
                 </div>
             </div>  
-        `
-    };
-}
-
-function updateColorPalette() {
-    colorPalette.innerHTML = "";
-
-    colorElObjArray.forEach((colorElObj) => {
-        const colorDivHtml = colorElObj.html;
+        `;
         colorPalette.innerHTML += colorDivHtml;
     });
 
+    // Add click event listeners to all the 
+    // .color-hex elements (for copying)
     const colorHexEls = document.querySelectorAll(".color-hex");
     colorHexEls.forEach((colorHexEl) => {
         colorHexEl.addEventListener("click", (e) => {
@@ -123,21 +130,21 @@ function updateColorPalette() {
 
 // Context menu buttons click event handlers
 
-function handleAddToLeft(e) {
+function handleAddToLeft(e, currentColorIndex) {
     // insert new color div to the left of current color div
-    const newColorObj = createColorElObj(templateColor);
-    colorElObjArray.splice(currentColorIndex, 0, newColorObj);
+    const newColorObj = createColorObj(templateColor);
+    colorObjArray.splice(currentColorIndex, 0, newColorObj);
     updateColorPalette();
 }
 
-function handleEdit(e) {
+function handleEdit(e, currentColorIndex) {
     console.log("edit")
 }
 
-function handleAddToRight(e) {
+function handleAddToRight(e, currentColorIndex) {
     // insert new color div to the right of current color div
-    const newColorObj = createColorElObj(templateColor);
-    colorElObjArray.splice(currentColorIndex + 1, 0, newColorObj);
+    const newColorObj = createColorObj(templateColor);
+    colorObjArray.splice(currentColorIndex + 1, 0, newColorObj);
     updateColorPalette();
 }
 
@@ -150,11 +157,9 @@ colorPalette.addEventListener("contextmenu", (e) => {
         const editBtn = contextMenu.children[1];
         const addToRightBtn = contextMenu.children[2];
 
-        const currentColorIndex = colorElObjArray.findIndex((obj) => obj.id === colorDiv.id);
-        if (currentColorIndex >= 0) {
-            console.log(colorElObjArray[currentColorIndex].id)
-        } else {
-            console.log("Error: color element object not found in colorElObjArray")
+        const currentColorIndex = colorObjArray.findIndex((obj) => obj.id === colorDiv.id);
+        if (currentColorIndex < 0) {
+            throw new Error("color element object not found in colorObjArray")
         }
 
         // show custom context menu
@@ -178,11 +183,17 @@ colorPalette.addEventListener("contextmenu", (e) => {
         }
         
 
-        addToLeftBtn.addEventListener('click', handleAddToLeft);
+        addToLeftBtn.addEventListener('click', (e) => {
+            handleAddToLeft(e, currentColorIndex);
+        });
 
-        editBtn.addEventListener('click', handleEdit);
+        editBtn.addEventListener('click', (e) => {
+            handleEdit(e, currentColorIndex);
+        });
 
-        addToRightBtn.addEventListener('click', handleAddToRight);
+        addToRightBtn.addEventListener('click', (e) => {
+            handleAddToRight(e, currentColorIndex);
+        });
     } 
 });
 
@@ -217,13 +228,14 @@ window.addEventListener("contextmenu", (e) => {
     })
 })
 
-const purpleElObj = createColorElObj("#663399");
-const lightPurpleElObj = createColorElObj("#CC77CC");
-const a = createColorElObj("#CCA8B8");
-const redElObj = createColorElObj("#CCCC99");
-const blueElObj = createColorElObj("#996633");
-const colorElObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
+const purpleElObj = createColorObj("#663399");
+const lightPurpleElObj = createColorObj("#CC77CC");
+const a = createColorObj("#CCA8B8");
+const redElObj = createColorObj("#CCCC99");
+const blueElObj = createColorObj("#996633");
+const colorObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
 
 updateColorPalette();
 
-new Color();
+// testing
+
