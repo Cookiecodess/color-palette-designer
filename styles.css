@@ -47,8 +47,13 @@ textarea:not([rows]) {
     --box-shadow-hover: 0 5px 10px -5px black;
 }
 
+@font-face {
+    font-family: "Inter";
+    src: url('assets/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+
 body {
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: Inter, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .color-palette {
@@ -104,6 +109,7 @@ body {
     bottom: 2em;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 100;
     font-size: 20px;
     text-decoration: underline;
     cursor: copy;
@@ -115,9 +121,9 @@ body {
 
 .color-hex > span {
     position: absolute;
-    left: 120%;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 50%;
+    bottom: 120%;
+    transform: translateX(-50%);
     font-size: 0.8em;
 
     display: none;

@@ -207,8 +207,10 @@ window.addEventListener("contextmenu", (e) => {
 })
 
 const purpleElObj = createColorElObj("#663399");
-const redElObj = createColorElObj("#660000");
-const blueElObj = createColorElObj("#00FFFF");
-const colorElObjArray = [purpleElObj, redElObj, blueElObj];
+const lightPurpleElObj = createColorElObj("#CC77CC");
+const a = createColorElObj("#CCA8B8");
+const redElObj = createColorElObj("#CCCC99");
+const blueElObj = createColorElObj("#996633");
+const colorElObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
 
 updateColorPalette();
