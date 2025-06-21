@@ -118,6 +118,26 @@ function updateColorPalette() {
     })
 }
 
+// Context menu buttons click event handlers
+
+function handleAddToLeft(e) {
+    // insert new color div to the left of current color div
+    const newColorObj = createColorElObj(templateColor);
+    colorElObjArray.splice(currentColorIndex, 0, newColorObj);
+    updateColorPalette();
+}
+
+function handleEdit(e) {
+    console.log("edit")
+}
+
+function handleAddToRight(e) {
+    // insert new color div to the right of current color div
+    const newColorObj = createColorElObj(templateColor);
+    colorElObjArray.splice(currentColorIndex + 1, 0, newColorObj);
+    updateColorPalette();
+}
+
 colorPalette.addEventListener("contextmenu", (e) => {
     if (e.target.classList.contains("color")) {
         e.preventDefault(); // suppress default context menu
@@ -155,23 +175,11 @@ colorPalette.addEventListener("contextmenu", (e) => {
         }
         
 
-        addToLeftBtn.addEventListener('click', (e) => {
-            // insert new color div to the left of current color div
-            const newColorObj = createColorElObj(templateColor);
-            colorElObjArray.splice(currentColorIndex, 0, newColorObj);
-            updateColorPalette();
-        });
+        addToLeftBtn.addEventListener('click', handleAddToLeft);
 
-        editBtn.addEventListener('click', (e) => {
-            console.log("edit")
-        });
+        editBtn.addEventListener('click', handleEdit);
 
-        addToRightBtn.addEventListener('click', (e) => {
-            // insert new color div to the right of current color div
-            const newColorObj = createColorElObj(templateColor);
-            colorElObjArray.splice(currentColorIndex + 1, 0, newColorObj);
-            updateColorPalette();
-        });
+        addToRightBtn.addEventListener('click', handleAddToRight);
     } 
 });
 
