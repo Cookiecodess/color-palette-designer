@@ -6,6 +6,8 @@ const colorPalette = document.querySelector(".color-palette");
 
 const templateColor = "#ddd";
 const CONTEXT_MENU_MARGIN_PX = 20;
+const CUSTOM_COLOR_NAME_PLACEHOLDER = "Unnamed"
+
 
 /**
  * 
@@ -79,6 +81,7 @@ function updateColorPalette() {
 
     // Render HTML from data in color object array
     colorObjArray.forEach((colorObj) => {
+        console.log(`colorObj.name: ${JSON.stringify(colorObj.name)}`)
         const colorDivHtml = `
             <div class="color ${getBrightOrDark(colorObj.colorHex)}-color" id="${colorObj.id}" style="background-color:${colorObj.colorHex}">
                 <div class="context-menu">
@@ -86,9 +89,10 @@ function updateColorPalette() {
                     <button class="btn" aria-label="Edit">Edit</button>
                     <button class="btn" aria-label="Add to Right">Add to Right</button>
                 </div>
-                <div class="text custom-color-name ${colorObj.name || "show-on-hover-fade-in-out"}">
-                    <input class="custom-color-name-input" type="text" placeholder="Unnamed" value="${colorObj.name || ""}"/>
-                </div>
+                <div class="text custom-color-name ${colorObj.name || "empty"}" 
+                    contenteditable="true" 
+                    spellcheck="false"
+                    data-placeholder="${CUSTOM_COLOR_NAME_PLACEHOLDER}">${colorObj.name || ""}</div>
                 <div class="text color-hex">
                     ${colorObj.colorHex}
                     <span>(copy?)</span>
@@ -131,12 +135,43 @@ function updateColorPalette() {
         });
     })
 
-    // Add change event listeners to all the
-    // .custom-color-name-input elements
-    const customColorNameInputEls = document.querySelectorAll(".custom-color-name-input");
-    customColorNameInputEls.forEach((inputEl) => {
-        inputEl.addEventListener("change", handleCustomNameChange);
+    // Add event listeners to all the
+    // .custom-color-name elements
+    const customColorNameEls = document.querySelectorAll(".custom-color-name");
+    customColorNameEls.forEach((inputEl) => {
+        inputEl.addEventListener("keydown", (e) => {
+            console.log("keydown event fired")
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                updateEmptyClass(e);
+                updateColorPalette();
+            }
+        })
+        
+        // update colorObj.name on every keystroke
+        inputEl.addEventListener("input", (e) => {
+            updateEmptyClass(e);
+            handleCustomNameChange(e);
+        });
+
+        // re-render DOM when .custom-color-name loses focus
+        inputEl.addEventListener("blur", (e) => {
+            console.log("blur event fired")
+
+            updateEmptyClass(e);
+            updateColorPalette();
+        });
     });
+}
+
+function updateEmptyClass(e) {
+    console.log(`e.target.innerHTML: ${JSON.stringify(e.target.innerHTML)}`)
+    console.log(`e.target.innerHTML.trim(): ${JSON.stringify(e.target.innerHTML.trim())}`)
+    const isEmpty = e.target.textContent.trim() === '';
+    e.target.classList.toggle("empty", isEmpty);
+    console.log(`isEmpty: ${isEmpty}`)
+    console.log(`e.target.classList: ${e.target.classList}`)
 }
 
 function findCurrentColorIndex(colorDivEl) {
@@ -170,13 +205,35 @@ function handleAddToRight(e, currentColorIndex) {
 function handleCustomNameChange(e) {
     const currentColorDiv = e.target.closest('.color');
     const currentColorIndex = findCurrentColorIndex(currentColorDiv);
+    const newCustomName = e.target.innerText.trim();
+    // NOTE: It is IMPERATIVE that we trim the innerText here
+    // There's a browser behavior where when an element
+    // with contenteditable="true" is emptied out, it is filled
+    // with a '\n', or a <br>, rather than letting it stay truly empty.
+    // This serves a purpose, for proper rendering of the caret
+    // or whatever. But this becomes an obstruction when I need
+    // to be able to tell when a user has left the field blank,
+    // and update it so that it shows a placeholder text.
+    // By ensuring newCustomName -- whose value gets assigned to
+    // the `name` property of a Color object -- is trimmed, 
+    // we ensure that the `empty` class is properly given to the 
+    // corresponding .color element, thus activating the placeholder
+    // text rule given to .empty elements. 
 
-    const newCustomName = e.target.value;
+    // debugging
+    // newCustomName.replace(/[\r\n]+/g, "");
+
+    console.log(`newCustomName: ${JSON.stringify(newCustomName)}`);
+    window.emptyish = newCustomName;
     
     colorObjArray[currentColorIndex].name = newCustomName;
-
-    updateColorPalette();
 }
+
+// function resizeCustomNameEl(e) {
+//     const customNameEl = e.target;
+//     const content = customNameEl.innerText || customNameEl.placeholder;
+//     // customNameEl.style.width = `${content.length}ch`;
+// }
 
 
 colorPalette.addEventListener("contextmenu", (e) => {
@@ -256,7 +313,7 @@ window.addEventListener("contextmenu", (e) => {
     })
 })
 
-const purpleElObj = createColorObj("#663399");
+const purpleElObj = createColorObj("#639");
 const lightPurpleElObj = createColorObj("#CC77CC");
 const a = createColorObj("#CCA8B8");
 const redElObj = createColorObj("#CCCC99");
@@ -267,4 +324,4 @@ purpleElObj.name = "rebeccapurple";
 updateColorPalette();
 
 // testing
-
+console.log(`emptyish: ${window.emptyish}`)

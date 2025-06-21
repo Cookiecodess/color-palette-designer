@@ -138,21 +138,34 @@ body {
 }
 
 .custom-color-name {
+    display: inline-block;
     top: 2em;
     font-size: 24px;
-}
-
-.custom-color-name input[type=text] {
+    word-wrap: break-word;
     text-align: center;
+    color: inherit;
     background-color: transparent;
     border: none;
     width: fit-content;
-    color: inherit;
+    max-width: 90%;
 }
-.custom-color-name input[type=text]:focus {
-    outline: none;
-    /* border: 2px solid #00bfff;
-    box-shadow: 0 0 4px #00bfff; */
+.custom-color-name:focus {
+    outline: auto;
+}
+
+.custom-color-name.empty::before {
+    content: attr(data-placeholder);
+    pointer-events: none;
+}
+
+.empty:not(:focus) {
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition-text);
+}
+.color:hover .empty {
+    opacity: 0.7;
+    pointer-events: all;
 }
 
 .dark-color .text {
@@ -169,12 +182,4 @@ body {
     color: #000d;
 }
 
-.show-on-hover-fade-in-out {
-    opacity: 0;
-    pointer-events: none;
-    transition: var(--transition-text);
-}
-.color:hover .show-on-hover-fade-in-out {
-    opacity: 1;
-    pointer-events: all;
-}
+
