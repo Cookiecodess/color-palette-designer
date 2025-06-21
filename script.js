@@ -77,6 +77,7 @@ function createColorObj(colorHex) {
 function updateColorPalette() {
     colorPalette.innerHTML = "";
 
+    // Render HTML from data in color object array
     colorObjArray.forEach((colorObj) => {
         const colorDivHtml = `
             <div class="color ${getBrightOrDark(colorObj.colorHex)}-color" id="${colorObj.id}" style="background-color:${colorObj.colorHex}">
@@ -85,7 +86,10 @@ function updateColorPalette() {
                     <button class="btn" aria-label="Edit">Edit</button>
                     <button class="btn" aria-label="Add to Right">Add to Right</button>
                 </div>
-                <div class="color-hex">
+                <div class="text custom-color-name ${colorObj.name || "show-on-hover-fade-in-out"}">
+                    <input class="custom-color-name-input" type="text" placeholder="Unnamed" value="${colorObj.name || ""}"/>
+                </div>
+                <div class="text color-hex">
                     ${colorObj.colorHex}
                     <span>(copy?)</span>
                 </div>
@@ -126,9 +130,24 @@ function updateColorPalette() {
                 });
         });
     })
+
+    // Add change event listeners to all the
+    // .custom-color-name-input elements
+    const customColorNameInputEls = document.querySelectorAll(".custom-color-name-input");
+    customColorNameInputEls.forEach((inputEl) => {
+        inputEl.addEventListener("change", handleCustomNameChange);
+    });
 }
 
-// Context menu buttons click event handlers
+function findCurrentColorIndex(colorDivEl) {
+    const currentColorIndex = colorObjArray.findIndex((obj) => obj.id === colorDivEl.id);
+    if (currentColorIndex < 0) {
+        throw new Error("color element object not found in colorObjArray")
+    }
+    return currentColorIndex;
+}
+
+// Event handlers
 
 function handleAddToLeft(e, currentColorIndex) {
     // insert new color div to the left of current color div
@@ -148,6 +167,18 @@ function handleAddToRight(e, currentColorIndex) {
     updateColorPalette();
 }
 
+function handleCustomNameChange(e) {
+    const currentColorDiv = e.target.closest('.color');
+    const currentColorIndex = findCurrentColorIndex(currentColorDiv);
+
+    const newCustomName = e.target.value;
+    
+    colorObjArray[currentColorIndex].name = newCustomName;
+
+    updateColorPalette();
+}
+
+
 colorPalette.addEventListener("contextmenu", (e) => {
     if (e.target.classList.contains("color")) {
         e.preventDefault(); // suppress default context menu
@@ -157,10 +188,7 @@ colorPalette.addEventListener("contextmenu", (e) => {
         const editBtn = contextMenu.children[1];
         const addToRightBtn = contextMenu.children[2];
 
-        const currentColorIndex = colorObjArray.findIndex((obj) => obj.id === colorDiv.id);
-        if (currentColorIndex < 0) {
-            throw new Error("color element object not found in colorObjArray")
-        }
+        const currentColorIndex = findCurrentColorIndex(colorDiv);
 
         // show custom context menu
         contextMenu.classList.add("show"); 
@@ -235,6 +263,7 @@ const redElObj = createColorObj("#CCCC99");
 const blueElObj = createColorObj("#996633");
 const colorObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
 
+purpleElObj.name = "rebeccapurple";
 updateColorPalette();
 
 // testing

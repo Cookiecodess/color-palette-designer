@@ -45,6 +45,7 @@ textarea:not([rows]) {
 :root {
     --box-shadow-idle: 0 2px 10px -5px black;
     --box-shadow-hover: 0 5px 10px -5px black;
+    --transition-text: all 0.3s;
 }
 
 @font-face {
@@ -104,16 +105,20 @@ body {
     /* transform: translateY(-5px); */
 }
 
-.color-hex {
+.color-hex,
+.custom-color-name {
     position: absolute;
-    bottom: 2em;
     left: 50%;
     transform: translateX(-50%);
+    transition: var(--transition-text);
+}
+
+.color-hex {
+    bottom: 2em;    
     z-index: 100;
     font-size: 20px;
     text-decoration: underline;
     cursor: copy;
-    transition: all 0.3s;
 }
 .color-hex:hover {
     text-decoration: none;
@@ -132,16 +137,44 @@ body {
     display: block;
 }
 
-.dark-color .color-hex {
+.custom-color-name {
+    top: 2em;
+    font-size: 24px;
+}
+
+.custom-color-name input[type=text] {
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    width: fit-content;
+    color: inherit;
+}
+.custom-color-name input[type=text]:focus {
+    outline: none;
+    /* border: 2px solid #00bfff;
+    box-shadow: 0 0 4px #00bfff; */
+}
+
+.dark-color .text {
     color: #fff6;
 }
-.dark-color:hover .color-hex {
+.dark-color:hover .text {
     color: #fffd;
 }
 
-.bright-color .color-hex {
+.bright-color .text {
     color: #0006;
 }
-.bright-color:hover .color-hex {
+.bright-color:hover .text {
     color: #000d;
+}
+
+.show-on-hover-fade-in-out {
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition-text);
+}
+.color:hover .show-on-hover-fade-in-out {
+    opacity: 1;
+    pointer-events: all;
 }
