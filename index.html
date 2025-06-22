@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="assets/coloris.min.css"/>
     <title>Palette Designer</title>
 </head>
 <body>
     <main class="color-palette">
+        <input type="text" data-coloris/>
 
         <!-- <div class="color" style="background-color:rebeccapurple">
             <div class="context-menu">
@@ -20,5 +22,28 @@
         
     </main> 
 </body>
-<script type="module" src="script.js"></script>
+<script src="assets/coloris.js"></script>
+<!-- <script type="module" src="script.js"></script> -->
+<script type="text/javascript">
+
+    // Coloris configuration
+
+    Coloris({
+        theme: 'pill',
+        themeMode: 'dark',
+        format: 'hex',
+        formatToggle: true,
+        closeButton: false,
+        clearButton: false,
+        swatches: [
+            // '#067bc2',
+            // '#84bcda',
+            // '#80e377',
+            // '#ecc30b',
+            // '#f37748',
+            // '#d56062'
+        ]
+    })
+
+</script>
 </html>
