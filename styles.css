@@ -183,3 +183,10 @@ body {
 }
 
 
+/* testing coloris */
+
+/* overrides coloris.min.css */
+/* removes color preview, which we don't need */
+.clr-field {
+    display: none !important;
+}

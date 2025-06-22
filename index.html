@@ -9,7 +9,9 @@
 </head>
 <body>
     <main class="color-palette">
-        <input type="text" data-coloris/>
+        <button id="clr-btn">Open Coloris</button>
+        <span id="clr-value"></span>
+        <input type="hidden" class="clr-input" data-coloris/>
 
         <!-- <div class="color" style="background-color:rebeccapurple">
             <div class="context-menu">
@@ -29,6 +31,7 @@
     // Coloris configuration
 
     Coloris({
+        el: '.clr-input',
         theme: 'pill',
         themeMode: 'dark',
         format: 'hex',
@@ -44,6 +47,45 @@
             // '#d56062'
         ]
     })
+
+    // Testing using buttons to open coloris picker
+
+    const colorBtn = document.getElementById("clr-btn");
+    const colorInput = document.querySelector(".clr-input");
+    const colorValue = document.getElementById("clr-value");
+    
+    // Using this pattern, we can make any element
+    // a trigger for opening the Coloris picker,
+    // not just input elements.
+    colorBtn.addEventListener("click", e => {
+        colorInput.dispatchEvent(new Event("click", { bubbles: true }));
+        
+        movePicker();
+    });
+
+    // "coloris:pick" event is fired every time
+    // a new color is picked
+    document.addEventListener("coloris:pick", e => {
+        console.log("new color: ", e.detail.color);
+    })    
+    
+    let mouseX, mouseY;
+
+    // Keep track of mouse position at all times
+    document.addEventListener("mousemove", e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        console.log(mouseX, mouseY)
+    })
+
+    // Move picker to where the mouse is
+    function movePicker() {        
+        const colorisPicker = document.querySelector(".clr-picker");
+        // console.log(`is clr-picker shown: ${colorisPicker.style.left !== ""}`);
+        // console.log("MOVE: "+colorisPicker.style.left+colorisPicker.style.top)
+        colorisPicker.style.top = `${mouseY}px`;
+        colorisPicker.style.left = `${mouseX}px`;
+    }
 
 </script>
 </html>
