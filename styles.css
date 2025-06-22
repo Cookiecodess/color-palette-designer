@@ -115,8 +115,10 @@ body {
 
 .color-hex {
     bottom: 2em;    
+    max-width: 90%;
     z-index: 100;
     font-size: 20px;
+    word-wrap: break-word;
     text-decoration: underline;
     cursor: copy;
 }
@@ -156,6 +158,7 @@ body {
 .custom-color-name.empty::before {
     content: attr(data-placeholder);
     pointer-events: none;
+    opacity: 0.5;
 }
 
 .empty:not(:focus) {
