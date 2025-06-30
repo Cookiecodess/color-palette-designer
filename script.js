@@ -56,7 +56,6 @@ function normalizeColorHex(colorHex) {
 }
 
 /**
- * 
  * @param {string} colorHex e.g. "#00DDFF" or "#0DF" or "00DDFF" or "0DF"
  * @returns a Color object
  * @throws an Error if colorHex is in an invalid format
@@ -76,6 +75,9 @@ function createColorObj(colorHex) {
     );
 }
 
+/**
+ * Re-render color pallete based on data from color object array
+ */
 function updateColorPalette() {
     colorPalette.innerHTML = "";
 
@@ -101,39 +103,6 @@ function updateColorPalette() {
         `;
         colorPalette.innerHTML += colorDivHtml;
     });
-
-    // Add click event listeners to all the 
-    // .color-hex elements (for copying)
-    const colorHexEls = document.querySelectorAll(".color-hex");
-    colorHexEls.forEach((colorHexEl) => {
-        colorHexEl.addEventListener("click", (e) => {
-            if (!e.target.classList.contains("color-hex")) {
-                return;
-            }
-            
-            const hexText = e.target.childNodes.item(0).textContent.trim(); // childNodes includes text nodes, unlike children. 
-                                                                            // Also, childNodes is a NodeList, which means array methods don't work on it;
-                                                                            // children is an Array. Use item() to access an element of a NodeList.
-            const copyText = e.target.children[0];
-            const original = copyText.innerText;  
-
-            navigator.clipboard.writeText(hexText)
-                .then(() => {
-                    console.log("Copied!");
-                    copyText.innerText = "(copied!)";                    
-                })
-                .catch(() => {
-                    console.log("Failed to copy to clipboard")
-                    copyText.innerText = "(failed to copy)";                    
-                })
-                .finally(() => {
-                    // reset text content to original
-                    setTimeout(() => {
-                        copyText.innerText = original;
-                    }, 3000);
-                });
-        });
-    })
 
     // Add event listeners to all the
     // .custom-color-name elements
@@ -234,6 +203,35 @@ function handleCustomNameChange(e) {
 //     const content = customNameEl.innerText || customNameEl.placeholder;
 //     // customNameEl.style.width = `${content.length}ch`;
 // }
+
+// Handle click event on .color-hex elements
+// for copying hex codes
+colorPalette.addEventListener("click", e => {
+    if (e.target.matches(".color-hex")) {
+        const hexText = e.target.childNodes.item(0).textContent.trim(); // childNodes includes text nodes, unlike children. 
+                                                                        // children is an Array, whereas childNodes is a NodeList.
+                                                                        // Use item() to access an element in a NodeList.
+        const copyText = e.target.children[0];
+        const original = copyText.innerText;  
+
+        navigator.clipboard.writeText(hexText)
+            .then(() => {
+                console.log("Copied!");
+                copyText.innerText = "(copied!)";                    
+            })
+            .catch(() => {
+                console.log("Failed to copy to clipboard")
+                copyText.innerText = "(failed to copy)";                    
+            })
+            .finally(() => {
+                // reset text content to original
+                setTimeout(() => {
+                    copyText.innerText = original;
+                }, 3000);
+            });
+            
+    }
+})
 
 
 colorPalette.addEventListener("contextmenu", (e) => {
