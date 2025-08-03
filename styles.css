@@ -191,5 +191,6 @@ body {
 /* overrides coloris.min.css */
 /* removes color preview, which we don't need */
 .clr-field {
-    display: none !important;
+    /* display: none !important; */
+    position: absolute !important;
 }

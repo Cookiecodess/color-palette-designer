@@ -11,6 +11,8 @@
       hueSlider, hueMarker, alphaSlider, alphaMarker, currentEl, currentFormat, oldColor, keyboardNav,
       colorAreaDims = {};
 
+  console.log("picker declared but undefined");
+
   // Default settings
   const settings = {
     el: '[data-coloris]',
@@ -641,6 +643,10 @@
    * @return {object} The pageX and pageY positions.
    */
   function getPointerPosition(event) {
+    console.log({
+      pageX: event.changedTouches ? event.changedTouches[0].pageX : event.pageX,
+      pageY: event.changedTouches ? event.changedTouches[0].pageY : event.pageY
+    });
     return {
       pageX: event.changedTouches ? event.changedTouches[0].pageX : event.pageX,
       pageY: event.changedTouches ? event.changedTouches[0].pageY : event.pageY
@@ -1215,6 +1221,8 @@
    */
   function DOMReady(fn, args) {
     args = args !== undefined ? args : [];
+
+    console.log(document.readyState);
 
     if (document.readyState !== 'loading') {
       fn(...args);
