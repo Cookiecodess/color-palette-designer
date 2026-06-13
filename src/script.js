@@ -79,7 +79,7 @@ function createColorObj(colorHex) {
  * Re-render color pallete based on data from color object array
  */
 function updateColorPalette() {
-    colorPalette.innerHTML = "";
+    colorPalette.innerHTML = '<input type="color" id="picker" style="display:none;">';
 
     // Render HTML from data in color object array
     colorObjArray.forEach((colorObj) => {
@@ -198,6 +198,25 @@ function handleCustomNameChange(e) {
     colorObjArray[currentColorIndex].name = newCustomName;
 }
 
+// `colorBlockClicked` is an HTMLElement
+function handlePickColor(colorBlockClicked) {
+    const picker = document.getElementById('picker');
+    picker.addEventListener('click', (e) => {
+        e.stopPropagation(); // avoid event bubbling, which may cause unwanted event triggers higher up the document tree
+        console.log('picker clicked')
+    })
+    picker.addEventListener('input', (e) => {
+        e.stopPropagation(); // avoid event bubbling, which may cause unwanted event triggers higher up the document tree
+        console.log('input event triggered on picker')
+        const targetHex = normalizeColorHex(e.target.value);
+        console.log('selected hex value: '+targetHex)
+        const idx = findCurrentColorIndex(colorBlockClicked);
+        colorObjArray[idx].colorHex = targetHex;
+        updateColorPalette();
+    })  
+    picker.click();
+}
+
 // function resizeCustomNameEl(e) {
 //     const customNameEl = e.target;
 //     const content = customNameEl.innerText || customNameEl.placeholder;
@@ -286,12 +305,35 @@ window.addEventListener("click", (e) => {
         return;
     }
 
+    console.log('"click" event triggered on `window`')
+    console.log('e.target:')
+    console.log(e.target)
+
+    const colorBlockClicked = e.target.classList.contains('color') ? e.target : null;
+    console.log('colorBlockClicked:')
+    console.log(colorBlockClicked)
+
+    let contextMenuWasOpen = false;
+
     // hide all context menus
     const colors = getColorsArray();
     colors.forEach((color) => {
         const contextMenu = color.children[0]; // temporary
-        contextMenu.classList.remove("show");
+        if (contextMenu && contextMenu.classList.contains("show")) {
+            contextMenuWasOpen = true;
+            contextMenu.classList.remove("show");
+        }
     })
+
+    // show color picker only if no context menus were open.
+    // in effect, when a context menu is open, the user
+    // is able to click away the context menu without
+    // summoning the color picker.
+    if (!contextMenuWasOpen && colorBlockClicked) {
+        handlePickColor(colorBlockClicked);
+    }
+
+    console.log('contextMenuWasOpen: ', contextMenuWasOpen)
 })
 
 window.addEventListener("contextmenu", (e) => {
@@ -316,10 +358,15 @@ const lightPurpleElObj = createColorObj("#CC77CC");
 const a = createColorObj("#CCA8B8");
 const redElObj = createColorObj("#CCCC99");
 const blueElObj = createColorObj("#996633");
-const colorObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
+// const colorObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
+const colorObjArray = [purpleElObj, lightPurpleElObj];
 
 purpleElObj.name = "rebeccapurple";
+console.log('before: ')
+console.log(btnArray)
 updateColorPalette();
+console.log('after: ')
+console.log(btnArray)
 
 // testing
 console.log(`emptyish: ${window.emptyish}`)
