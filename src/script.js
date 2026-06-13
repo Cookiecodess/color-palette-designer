@@ -8,6 +8,7 @@ const templateColor = "#ddd";
 const CONTEXT_MENU_MARGIN_PX = 20;
 const CUSTOM_COLOR_NAME_PLACEHOLDER = "Unnamed"
 
+let prevPickColorCallback = undefined;
 
 /**
  * 
@@ -201,11 +202,25 @@ function handleCustomNameChange(e) {
 // `colorBlockClicked` is an HTMLElement
 function handlePickColor(colorBlockClicked) {
     const picker = document.getElementById('picker');
+
+    // this is to prevent leftover `input` event listeners in case user
+    // opens the color picker on a block, which triggers this function
+    // to add the `input` event listener to `picker`, but the user then
+    // does not proceed with inputting a color, and opens the color picker on another 
+    // color block, causing two color blocks to simultaneously have
+    // their own `input` event listeners. Consequently, when the user
+    // selects a color, supposedly only on the second block, 
+    // both blocks' `input` event listeners are triggered and 
+    // change their colors to the selected color.
+    // TL;DR only one color block shall have an `input` event listener at a time.
+    picker.removeEventListener('input', prevPickColorCallback);
+
     picker.addEventListener('click', (e) => {
         e.stopPropagation(); // avoid event bubbling, which may cause unwanted event triggers higher up the document tree
         console.log('picker clicked')
     })
-    picker.addEventListener('input', (e) => {
+
+    prevPickColorCallback = e => {
         e.stopPropagation(); // avoid event bubbling, which may cause unwanted event triggers higher up the document tree
         console.log('input event triggered on picker')
         const targetHex = normalizeColorHex(e.target.value);
@@ -213,7 +228,8 @@ function handlePickColor(colorBlockClicked) {
         const idx = findCurrentColorIndex(colorBlockClicked);
         colorObjArray[idx].colorHex = targetHex;
         updateColorPalette();
-    })  
+    }
+    picker.addEventListener('input', prevPickColorCallback)  
     picker.click();
 }
 
