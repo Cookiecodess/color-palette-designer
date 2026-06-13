@@ -15,4 +15,7 @@ python -m http.server 8000
 
 with the root of this repository as the current directory.
 
+## TODO
+
+- on chrome, due to how the `<input type='color'/>` element works, might be best to implement a color picker element for each color block rather than have all blocks share one (you're probably thinking "this is hell of a bad design in the first place").
 

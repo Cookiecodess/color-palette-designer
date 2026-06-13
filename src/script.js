@@ -374,8 +374,8 @@ const lightPurpleElObj = createColorObj("#CC77CC");
 const a = createColorObj("#CCA8B8");
 const redElObj = createColorObj("#CCCC99");
 const blueElObj = createColorObj("#996633");
-// const colorObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
-const colorObjArray = [purpleElObj, lightPurpleElObj];
+const colorObjArray = [purpleElObj, lightPurpleElObj, a, redElObj, blueElObj];
+// const colorObjArray = [purpleElObj, lightPurpleElObj];
 
 purpleElObj.name = "rebeccapurple";
 console.log('before: ')
